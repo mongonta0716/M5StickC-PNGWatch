@@ -38,15 +38,18 @@ const char pass[] = "XXXXXXXXXXXXXXXXXXXX";         // set your passphrase
 const char ntpServer[] = "XXXXXXXXXXXXXXXXXXXX";    // set your NTP Server
 
 const uint8_t  brightness = 8;                     // LCD brightness(7 - 15)
-const uint16_t clockx = 40;                        // clock center X
+const uint16_t clockx = 40;                       // clock center X
 const uint16_t clocky = 40;                        // clock center Y
 const uint16_t len[3] = { 25, 30, 35 };            // Size of clock hands
-const uint16_t color[3] = { TFT_BLACK, TFT_BLACK, TFT_RED }; // Color of clock hands 
+const uint16_t colorhh = M5.Lcd.color565(0, 0, 0); // Color of clock hand(hour)
+const uint16_t colormm = M5.Lcd.color565(0, 0, 0); // Color of clock hand(minute)
+const uint16_t colorss = M5.Lcd.color565(255, 0, 0);    // Color of clock hand(second)
+
 // ----------------------------------------------------------------------------------
 // End of initial Settings
 // ----------------------------------------------------------------------------------
 
-
+uint16_t handscolor[3] = {colorhh, colormm, colorss};
 uint16_t ox[3] = { 0, 0, 0 } ,oy[3] = { 0, 0, 0 };           // Outer coordinates of clock hands
 uint16_t cx[3][3]= { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0} }; // Center coordinates of clock hands.
 uint16_t cy[3][3]= { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0} }; // Center coordinates of clock hands.
@@ -100,6 +103,7 @@ void adjustRTCfromNTP() {
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   delay(5000);
+
   
   startRTC();
   bg.pushLayer(0, 0);
@@ -117,6 +121,8 @@ void setup(void) {
   
   bg.createLayer(160, 80);
   bg.pushImage(0, 0, 160, 80, clockC );
+
+
 
 }
 
@@ -170,11 +176,11 @@ void loop() {
     // Draw new clock hands.
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        M5.Lcd.drawLine(ox[i], oy[i], cx[i][j], cy[i][j], color[i]);
+        M5.Lcd.drawLine(ox[i], oy[i], cx[i][j], cy[i][j], handscolor[i]);
       }
     }
 
-    M5.Lcd.fillCircle(clockx, clocky, 3, color[2]);
+    M5.Lcd.fillCircle(clockx, clocky, 3, handscolor[2]);
 
   }
  
